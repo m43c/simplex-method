@@ -1,6 +1,7 @@
 def add_decision_variables():
     number_of_decision_variables = int(
-        input("Number of decision variables for objetive function: "))
+        input("Number of decision variables for objetive function: ")
+    )
     decision_variables = [int(input(f"x{i + 1}=")) for i in
                           range(number_of_decision_variables)]
 
@@ -15,8 +16,8 @@ def show_objective_function(objective_function):
         i, coef in enumerate(objective_function)]
 
     # Print the objective function
-    print("\nObjective function:")
-    print("Z=" + "".join(modified_decision_variables))
+    print("Objective function:")
+    print("Z=" + "".join(modified_decision_variables) + "\n")
 
 
 def add_constraint_variables():
@@ -55,15 +56,50 @@ def show_restrictions(restrictions):
 
         # Print each constraint
         print("".join(modified_coefficients) + restriction[
-            -2] + f"{restriction[-1]}")
+            -2] + f"{restriction[-1]}"
+              )
+
+
+def convert_objective_function_to_equation(objective_function):
+    equation = [1] + [coef * -1 for coef in objective_function] + [0 for _ in
+                                                                   range(3)] + [
+                   0]
+    return equation
+
+
+def convert_constraints_to_equations(restrictions):
+    equations = []
+
+    for i, restriction in enumerate(restrictions):
+        z = 0
+        coefficients = list(filter(lambda element: not isinstance(element, str),
+                                   restriction[:-1]
+                                   )
+                            )
+        slack_variables = [1 if j == i else 0 for j in range(len(restrictions))]
+        rhs = restriction[-1]
+
+        new_restriction = [z] + coefficients + slack_variables + [rhs]
+        equations.append(new_restriction)
+
+    return equations
 
 
 def main():
     objective_function = add_decision_variables()
-    show_objective_function(objective_function)
-
     restrictions = add_constraint_variables()
+
+    show_objective_function(objective_function)
     show_restrictions(restrictions)
+
+    print()
+    objective_function_equation = convert_objective_function_to_equation(
+        objective_function
+    )
+    print(objective_function_equation)
+
+    constraint_equations = convert_constraints_to_equations(restrictions)
+    print(constraint_equations)
 
 
 if __name__ == "__main__":
