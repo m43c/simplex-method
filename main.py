@@ -2,7 +2,7 @@ def add_decision_variables():
     number_of_decision_variables = int(
         input("Number of decision variables for objetive function: ")
     )
-    decision_variables = [int(input(f"x{i + 1}=")) for i in
+    decision_variables = [int(input(f"X{i + 1}=")) for i in
                           range(number_of_decision_variables)]
 
     return decision_variables
@@ -12,7 +12,7 @@ def show_objective_function(objective_function):
     # Create a modified list for the representation of decision variables in the
     # objetive function
     modified_decision_variables = [
-        f"+{coef}x{i + 1}" if i > 0 and coef > 0 else f"{coef}x{i + 1}" for
+        f"+{coef}X{i + 1}" if i > 0 and coef > 0 else f"{coef}X{i + 1}" for
         i, coef in enumerate(objective_function)]
 
     # Print the objective function
@@ -34,9 +34,9 @@ def add_constraint_variables():
             if i == number_of_decision_variables:
                 constraint_variables.append(input("Comparator="))
             elif i == number_of_decision_variables + 1:
-                constraint_variables.append(int(input("rhs=")))
+                constraint_variables.append(int(input("RHS=")))
             else:
-                constraint_variables.append(int(input(f"x{i + 1}=")))
+                constraint_variables.append(int(input(f"X{i + 1}=")))
 
         restrictions.append(constraint_variables)
         print()
@@ -51,7 +51,7 @@ def show_restrictions(restrictions):
     # objetive function
     for restriction in restrictions:
         modified_coefficients = [
-            f"+{coef}x{i + 1}" if i > 0 and int(coef) > 0 else f"{coef}x{i + 1}"
+            f"+{coef}X{i + 1}" if i > 0 and int(coef) > 0 else f"{coef}X{i + 1}"
             for i, coef in enumerate(restriction[:-2])]
 
         # Print each constraint
@@ -100,6 +100,15 @@ def show_tableau_simplex(tableau_simplex):
         print()
 
 
+def is_optimal_solution(row_z):
+    return any(coef < 0 for coef in row_z)
+
+
+def calculate_optimal_solution(tableau_simplex):
+    while is_optimal_solution(tableau_simplex[-1]):
+        pass
+
+
 def main():
     objective_function = add_decision_variables()
     restrictions = add_constraint_variables()
@@ -117,6 +126,8 @@ def main():
 
     print("Tableau Simplex")
     show_tableau_simplex(tableau_simplex)
+
+    print(tableau_simplex)
 
 
 if __name__ == "__main__":
