@@ -95,7 +95,10 @@
       <workItem from="1703259922464" duration="3136000" />
       <workItem from="1703291104058" duration="4217000" />
       <workItem from="1703334246352" duration="8294000" />
-      <workItem from="1703430853867" duration="2864000" />
+      <workItem from="1703430853867" duration="2965000" />
+      <workItem from="1703600585491" duration="4263000" />
+      <workItem from="1703640358284" duration="2690000" />
+      <workItem from="1703684544807" duration="407000" />
     </task>
     <servers />
   </component>
@@ -103,6 +106,6 @@
     <option name="version" value="3" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/simplex_method$main.coverage" NAME="main Coverage Results" MODIFIED="1703436620288" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/simplex_method$main.coverage" NAME="main Coverage Results" MODIFIED="1703642421785" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

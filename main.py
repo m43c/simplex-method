@@ -85,6 +85,21 @@ def convert_constraints_to_equations(restrictions):
     return equations
 
 
+def show_tableau_simplex(tableau_simplex):
+    print("BV\t\tZ\t\tX1\t\tX2\t\tS1\t\tS2\t\tS3\t\tRHS")
+    print("------------------------------------------------------------")
+
+    for i, restriction in enumerate(tableau_simplex):
+        for j, value in enumerate(restriction):
+            if i < len(tableau_simplex) - 1 and j == 0:
+                print(f"S{i + 1}\t\t{value}\t\t", end="")
+            elif i == len(tableau_simplex) - 1 and j == 0:
+                print(f"Z\t\t{value}\t\t", end="")
+            else:
+                print(f"{value}\t\t", end="")
+        print()
+
+
 def main():
     objective_function = add_decision_variables()
     restrictions = add_constraint_variables()
@@ -96,10 +111,12 @@ def main():
     objective_function_equation = convert_objective_function_to_equation(
         objective_function
     )
-    print(objective_function_equation)
-
     constraint_equations = convert_constraints_to_equations(restrictions)
-    print(constraint_equations)
+
+    tableau_simplex = constraint_equations + [objective_function_equation]
+
+    print("Tableau Simplex")
+    show_tableau_simplex(tableau_simplex)
 
 
 if __name__ == "__main__":
