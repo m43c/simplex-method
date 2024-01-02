@@ -104,9 +104,17 @@ def is_optimal_solution(row_z):
     return any(coef < 0 for coef in row_z)
 
 
+def find_pivot_column(tableau_simplex):
+    row_z = tableau_simplex[-1]
+    min_value = min(row_z)
+    column_index = row_z.index(min_value)
+
+    return [row[column_index] for row in tableau_simplex]
+
+
 def calculate_optimal_solution(tableau_simplex):
     while is_optimal_solution(tableau_simplex[-1]):
-        pass
+        pivot_column = min(tableau_simplex)
 
 
 def main():
@@ -126,8 +134,6 @@ def main():
 
     print("Tableau Simplex")
     show_tableau_simplex(tableau_simplex)
-
-    print(tableau_simplex)
 
 
 if __name__ == "__main__":
