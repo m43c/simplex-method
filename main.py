@@ -135,6 +135,8 @@ def calculate_optimal_solution(tableau_simplex):
         pivot_row = find_pivot_row(tableau_simplex, pivot_column
                                    )  # Output variable
 
+        pivot_element = tableau_simplex[pivot_row][pivot_column]
+
 
 def main():
     objective_function = add_decision_variables()
