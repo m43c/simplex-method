@@ -109,7 +109,7 @@ def find_pivot_column(tableau_simplex):
     min_value = min(row_z)
     column_index = row_z.index(min_value)
 
-    return [row[column_index] for row in tableau_simplex]
+    return [column[column_index] for column in tableau_simplex]
 
 
 def find_pivot_row(tableau_simplex, pivot_column):
