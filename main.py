@@ -112,9 +112,28 @@ def find_pivot_column(tableau_simplex):
     return [row[column_index] for row in tableau_simplex]
 
 
+def find_pivot_row(tableau_simplex, pivot_column):
+    rhs_column_index = len(tableau_simplex) - 1
+    rhs_column = [column[rhs_column_index] for column in tableau_simplex]
+    positives_results = []
+
+    for pivot_col_coef, rhs_col_coef in zip(pivot_column[:-1], rhs_column[:-1]):
+        positive_result = pivot_col_coef / rhs_col_coef
+
+        if positive_result > 0:
+            positives_results.append(positive_result)
+
+    row_index = rhs_column.index(min(positives_results))
+
+    return [value for value in tableau_simplex[row_index]]
+
+
 def calculate_optimal_solution(tableau_simplex):
     while is_optimal_solution(tableau_simplex[-1]):
-        pivot_column = min(tableau_simplex)
+        pivot_column = min(tableau_simplex)  # Input variable
+
+        pivot_row = find_pivot_row(tableau_simplex, pivot_column
+                                   )  # Output variable
 
 
 def main():
