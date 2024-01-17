@@ -87,7 +87,7 @@ def convert_constraints_to_equations(restrictions):
 
 def show_tableau_simplex(tableau_simplex):
     print("BV\t\tZ\t\tX1\t\tX2\t\tS1\t\tS2\t\tS3\t\tRHS")
-    print("------------------------------------------------------------")
+    print("-----------------------------------------------------------")
 
     for i, restriction in enumerate(tableau_simplex):
         for j, value in enumerate(restriction):
@@ -108,34 +108,41 @@ def find_pivot_column(tableau_simplex):
     row_z = tableau_simplex[-1]
     min_value = min(row_z)
     column_index = row_z.index(min_value)
+    column = [row[column_index] for row in tableau_simplex]
 
-    return [column[column_index] for column in tableau_simplex]
+    return column_index, column
 
 
 def find_pivot_row(tableau_simplex, pivot_column):
-    rhs_column_index = len(tableau_simplex) - 1
-    rhs_column = [column[rhs_column_index] for column in tableau_simplex]
-    positives_results = []
+    rhs_column = [row[-1] for row in tableau_simplex]
+    results = []
+    index = 0
 
-    for pivot_col_coef, rhs_col_coef in zip(pivot_column[:-1], rhs_column[:-1]):
-        positive_result = pivot_col_coef / rhs_col_coef
+    for rhs_col_coef, pivot_col_coef in zip(rhs_column, pivot_column):
+        result = rhs_col_coef / pivot_col_coef
+        results.append((result, index))
 
-        if positive_result > 0:
-            positives_results.append(positive_result)
+        index += 1
 
-    row_index = rhs_column.index(min(positives_results))
+    positive_results = list(filter(lambda value: value[0] > 0, results))
+    min_result = min(positive_results, key=lambda value: value[0])
 
-    return [value for value in tableau_simplex[row_index]]
+    row_index = min_result[1]
+    row = [value for value in tableau_simplex[row_index]]
+
+    return row_index, row
 
 
 def calculate_optimal_solution(tableau_simplex):
     while is_optimal_solution(tableau_simplex[-1]):
-        pivot_column = min(tableau_simplex)  # Input variable
+        pivot_column_index, pivot_column = find_pivot_column(tableau_simplex
+                                                             )  # Input variable
 
-        pivot_row = find_pivot_row(tableau_simplex, pivot_column
-                                   )  # Output variable
+        pivot_row_index, pivot_row = find_pivot_row(tableau_simplex,
+                                                    pivot_column
+                                                    )  # Output variable
 
-        pivot_element = tableau_simplex[pivot_row][pivot_column]
+        pivot_element = tableau_simplex[pivot_row_index][pivot_column_index]
 
 
 def main():
