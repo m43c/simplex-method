@@ -137,12 +137,32 @@ def calculate_optimal_solution(tableau_simplex):
     while is_optimal_solution(tableau_simplex[-1]):
         pivot_column_index, pivot_column = find_pivot_column(tableau_simplex
                                                              )  # Input variable
-
         pivot_row_index, pivot_row = find_pivot_row(tableau_simplex,
                                                     pivot_column
                                                     )  # Output variable
-
         pivot_element = tableau_simplex[pivot_row_index][pivot_column_index]
+
+        new_tableau_simplex = []
+        incoming_row = [value / pivot_element for value in
+                        tableau_simplex[pivot_row_index]]
+        old_row_pivot_coef = [row[pivot_column_index] for row in
+                              tableau_simplex]
+
+        for i, row in enumerate(tableau_simplex):
+            new_row = []
+
+            if i != pivot_row_index:
+                old_row = [value for value in tableau_simplex[i]]
+
+                for old_val, incoming_val in zip(old_row, incoming_row):
+                    result = old_val - old_row_pivot_coef[i] * incoming_val
+                    new_row.append(result)
+            else:
+                new_row = incoming_row
+
+            new_tableau_simplex.append(new_row)
+
+        tableau_simplex = new_tableau_simplex
 
 
 def main():
@@ -160,8 +180,10 @@ def main():
 
     tableau_simplex = constraint_equations + [objective_function_equation]
 
-    print("Tableau Simplex")
+    print("Tableau Simplex #1")
     show_tableau_simplex(tableau_simplex)
+
+    calculate_optimal_solution(tableau_simplex)
 
 
 if __name__ == "__main__":
