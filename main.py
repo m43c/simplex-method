@@ -2,7 +2,7 @@ def add_decision_variables():
     number_of_decision_variables = int(
         input("Number of decision variables for objetive function: ")
     )
-    decision_variables = [int(input(f"X{i + 1}=")) for i in
+    decision_variables = [float(input(f"X{i + 1}=")) for i in
                           range(number_of_decision_variables)]
 
     return decision_variables
@@ -34,9 +34,9 @@ def add_constraint_variables():
             if i == number_of_decision_variables:
                 constraint_variables.append(input("Comparator="))
             elif i == number_of_decision_variables + 1:
-                constraint_variables.append(int(input("RHS=")))
+                constraint_variables.append(float(input("RHS=")))
             else:
-                constraint_variables.append(int(input(f"X{i + 1}=")))
+                constraint_variables.append(float(input(f"X{i + 1}=")))
 
         restrictions.append(constraint_variables)
         print()
