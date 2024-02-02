@@ -89,7 +89,8 @@ def convert_constraints_to_equations(restrictions):
     return equations
 
 
-def show_tableau_simplex(tableau, number_dec_var, pvt_col_idx):
+def show_tableau_simplex(tableau, number_dec_var, pvt_col_idx=-1, pvt_rw_idx=-1
+                         ):
     decision_variables = [f"X{coef + 1}" for coef in range(number_dec_var)]
     slack_variables = [f"S{var + 1}" for var in range(len(tableau) - 1)]
     header = ["BV", "Z"] + decision_variables + slack_variables + ["RHS"]
@@ -97,8 +98,14 @@ def show_tableau_simplex(tableau, number_dec_var, pvt_col_idx):
 
     for idx, row in enumerate(tableau):
         if idx < len(tableau) - 1:
-            modified_row = [f"S{idx + 1}"] + [Fraction(i).limit_denominator()
-                                              for i in row.copy()]
+            if idx == pvt_rw_idx:
+                modified_row = [f"X{pvt_col_idx}"] + [
+                    Fraction(i).limit_denominator()
+                    for i in row.copy()]
+            else:
+                modified_row = [f"S{idx + 1}"] + [
+                    Fraction(i).limit_denominator()
+                    for i in row.copy()]
         else:
             modified_row = ["Z"] + [Fraction(i).limit_denominator() for i in
                                     row.copy()]
@@ -162,9 +169,7 @@ def calculate_optimal_solution(tableau_simplex, number_of_decision_variables):
                               tableau_simplex]
 
         print(f"Tableau Simplex #1")
-        show_tableau_simplex(tableau_simplex, number_of_decision_variables,
-                             pivot_column_index
-                             )
+        show_tableau_simplex(tableau_simplex, number_of_decision_variables)
 
         for i, row in enumerate(tableau_simplex):
             new_row = []
@@ -184,7 +189,7 @@ def calculate_optimal_solution(tableau_simplex, number_of_decision_variables):
 
         print(f"\nTableau Simplex #{tableau_number}")
         show_tableau_simplex(tableau_simplex, number_of_decision_variables,
-                             pivot_column_index
+                             pivot_column_index, pivot_row_index
                              )
 
         tableau_number += 1
