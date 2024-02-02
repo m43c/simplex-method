@@ -1,3 +1,7 @@
+from tabulate import tabulate
+from fractions import Fraction
+
+
 def add_decision_variables():
     number_of_decision_variables = int(
         input("Number of decision variables for objetive function: ")
@@ -5,17 +9,15 @@ def add_decision_variables():
     decision_variables = [float(input(f"X{i + 1}=")) for i in
                           range(number_of_decision_variables)]
 
-    return decision_variables
+    return number_of_decision_variables, decision_variables
 
 
 def show_objective_function(objective_function):
-    # Create a modified list for the representation of decision variables in the
-    # objetive function
     modified_decision_variables = [
-        f"+{coef}X{i + 1}" if i > 0 and coef > 0 else f"{coef}X{i + 1}" for
+        f"+{Fraction(coef).limit_denominator()}X{i + 1}" if i > 0 and coef > 0 else f"{Fraction(coef).limit_denominator()}X{i + 1}"
+        for
         i, coef in enumerate(objective_function)]
 
-    # Print the objective function
     print("Objective function:")
     print("Z=" + "".join(modified_decision_variables) + "\n")
 
@@ -47,23 +49,19 @@ def add_constraint_variables():
 def show_restrictions(restrictions):
     print("Subject to:")
 
-    # Create a modified list for the representation of decision variables in the
-    # objetive function
     for restriction in restrictions:
         modified_coefficients = [
-            f"+{coef}X{i + 1}" if i > 0 and int(coef) > 0 else f"{coef}X{i + 1}"
+            f"+{Fraction(coef).limit_denominator()}X{i + 1}" if i > 0 and coef > 0 else f"{Fraction(coef).limit_denominator()}X{i + 1}"
             for i, coef in enumerate(restriction[:-2])]
 
-        # Print each constraint
         print("".join(modified_coefficients) + restriction[
-            -2] + f"{restriction[-1]}"
+            -2] + f"{Fraction(restriction[-1]).limit_denominator()}"
               )
 
 
 def convert_objective_function_to_equation(objective_function):
-    equation = [1] + [coef * -1 for coef in objective_function] + [0 for _ in
-                                                                   range(3)] + [
-                   0]
+    equation = ([1.0] + [coef * -1 for coef in objective_function] +
+                [0.0 for _ in range(3)] + [0.0])
     return equation
 
 
@@ -71,12 +69,13 @@ def convert_constraints_to_equations(restrictions):
     equations = []
 
     for i, restriction in enumerate(restrictions):
-        z = 0
+        z = 0.0
         coefficients = list(filter(lambda element: not isinstance(element, str),
                                    restriction[:-1]
                                    )
                             )
-        slack_variables = [1 if j == i else 0 for j in range(len(restrictions))]
+        slack_variables = [1.0 if j == i else 0.0 for j in
+                           range(len(restrictions))]
         rhs = restriction[-1]
 
         new_restriction = [z] + coefficients + slack_variables + [rhs]
@@ -85,19 +84,26 @@ def convert_constraints_to_equations(restrictions):
     return equations
 
 
-def show_tableau_simplex(tableau_simplex):
-    print("BV\t\tZ\t\tX1\t\tX2\t\tS1\t\tS2\t\tS3\t\tRHS")
-    print("-----------------------------------------------------------")
+def show_tableau_simplex(tableau, number_dec_var, pvt_col_idx):
+    decision_variables = [f"X{coef + 1}" for coef in range(number_dec_var)]
+    slack_variables = [f"S{var + 1}" for var in range(len(tableau) - 1)]
+    header = ["BV", "Z"] + decision_variables + slack_variables + ["RHS"]
+    modified_tableau = []
 
-    for i, restriction in enumerate(tableau_simplex):
-        for j, value in enumerate(restriction):
-            if i < len(tableau_simplex) - 1 and j == 0:
-                print(f"S{i + 1}\t\t{value}\t\t", end="")
-            elif i == len(tableau_simplex) - 1 and j == 0:
-                print(f"Z\t\t{value}\t\t", end="")
-            else:
-                print(f"{value}\t\t", end="")
-        print()
+    for idx, row in enumerate(tableau):
+        if idx < len(tableau) - 1:
+            modified_row = [f"S{idx + 1}"] + [Fraction(i).limit_denominator()
+                                              for i in row.copy()]
+        else:
+            modified_row = ["Z"] + [Fraction(i).limit_denominator() for i in
+                                    row.copy()]
+
+        modified_tableau.append(modified_row)
+
+    modified_tableau_representation = tabulate(modified_tableau, headers=header,
+                                               tablefmt="pretty"
+                                               )
+    print(modified_tableau_representation)
 
 
 def is_optimal_solution(row_z):
@@ -133,7 +139,9 @@ def find_pivot_row(tableau_simplex, pivot_column):
     return row_index, row
 
 
-def calculate_optimal_solution(tableau_simplex):
+def calculate_optimal_solution(tableau_simplex, number_of_decision_variables):
+    tableau_number = 2
+
     while is_optimal_solution(tableau_simplex[-1]):
         pivot_column_index, pivot_column = find_pivot_column(tableau_simplex
                                                              )  # Input variable
@@ -147,6 +155,11 @@ def calculate_optimal_solution(tableau_simplex):
                         tableau_simplex[pivot_row_index]]
         old_row_pivot_coef = [row[pivot_column_index] for row in
                               tableau_simplex]
+
+        print(f"Tableau Simplex #1")
+        show_tableau_simplex(tableau_simplex, number_of_decision_variables,
+                             pivot_column_index
+                             )
 
         for i, row in enumerate(tableau_simplex):
             new_row = []
@@ -164,9 +177,16 @@ def calculate_optimal_solution(tableau_simplex):
 
         tableau_simplex = new_tableau_simplex
 
+        print(f"\nTableau Simplex #{tableau_number}")
+        show_tableau_simplex(tableau_simplex, number_of_decision_variables,
+                             pivot_column_index
+                             )
+
+        tableau_number += 1
+
 
 def main():
-    objective_function = add_decision_variables()
+    number_of_decision_variables, objective_function = add_decision_variables()
     restrictions = add_constraint_variables()
 
     show_objective_function(objective_function)
@@ -180,10 +200,7 @@ def main():
 
     tableau_simplex = constraint_equations + [objective_function_equation]
 
-    print("Tableau Simplex #1")
-    show_tableau_simplex(tableau_simplex)
-
-    calculate_optimal_solution(tableau_simplex)
+    calculate_optimal_solution(tableau_simplex, number_of_decision_variables)
 
 
 if __name__ == "__main__":
