@@ -12,11 +12,15 @@ def add_decision_variables():
     return number_of_decision_variables, decision_variables
 
 
+def format_value(value):
+    return Fraction(value).limit_denominator()
+
+
 def show_objective_function(objective_function):
     modified_decision_variables = [
-        f"+{Fraction(coef).limit_denominator()}X{i + 1}" if i > 0 and coef > 0 else f"{Fraction(coef).limit_denominator()}X{i + 1}"
-        for
-        i, coef in enumerate(objective_function)]
+        f"+{format_value(coef)}X{i + 1}" if i > 0 and coef > 0 else
+        f"{format_value(coef)}X{i + 1}" for i, coef in
+        enumerate(objective_function)]
 
     print("Objective function:")
     print("Z=" + "".join(modified_decision_variables) + "\n")
@@ -51,11 +55,12 @@ def show_restrictions(restrictions):
 
     for restriction in restrictions:
         modified_coefficients = [
-            f"+{Fraction(coef).limit_denominator()}X{i + 1}" if i > 0 and coef > 0 else f"{Fraction(coef).limit_denominator()}X{i + 1}"
-            for i, coef in enumerate(restriction[:-2])]
+            f"+{format_value(coef)}X{i + 1}" if i > 0 and coef > 0 else
+            f"{format_value(coef)}X{i + 1}" for i, coef in
+            enumerate(restriction[:-2])]
 
-        print("".join(modified_coefficients) + restriction[
-            -2] + f"{Fraction(restriction[-1]).limit_denominator()}"
+        print("".join(modified_coefficients) + restriction[-2] +
+              f"{format_value(restriction[-1])}"
               )
 
 
