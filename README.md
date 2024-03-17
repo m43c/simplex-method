@@ -1,4 +1,4 @@
-# Simplex Method Solver
+# Simplex Method
 
 ## Introduction
 
