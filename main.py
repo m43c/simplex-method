@@ -59,9 +59,10 @@ def show_restrictions(restrictions):
             f"{format_value(coef)}X{i + 1}" for i, coef in
             enumerate(restriction[:-2])]
 
-        print("".join(modified_coefficients) + restriction[-2] +
-              f"{format_value(restriction[-1])}"
-              )
+        print(
+            "".join(modified_coefficients) + restriction[-2] +
+            f"{format_value(restriction[-1])}"
+            )
 
 
 def convert_objective_function_to_equation(objective_function):
@@ -75,10 +76,12 @@ def convert_constraints_to_equations(restrictions):
 
     for i, restriction in enumerate(restrictions):
         z = 0.0
-        coefficients = list(filter(lambda element: not isinstance(element, str),
-                                   restriction[:-1]
-                                   )
-                            )
+        coefficients = list(
+            filter(
+                lambda element: not isinstance(element, str),
+                restriction[:-1]
+            )
+        )
         slack_variables = [1.0 if j == i else 0.0 for j in
                            range(len(restrictions))]
         rhs = restriction[-1]
@@ -89,8 +92,9 @@ def convert_constraints_to_equations(restrictions):
     return equations
 
 
-def show_tableau_simplex(tableau, number_dec_var, pvt_col_idx=-1, pvt_rw_idx=-1
-                         ):
+def show_tableau_simplex(
+    tableau, number_dec_var, pvt_col_idx=-1, pvt_rw_idx=-1
+):
     decision_variables = [f"X{coef + 1}" for coef in range(number_dec_var)]
     slack_variables = [f"S{var + 1}" for var in range(len(tableau) - 1)]
     header = ["BV", "Z"] + decision_variables + slack_variables + ["RHS"]
@@ -112,9 +116,10 @@ def show_tableau_simplex(tableau, number_dec_var, pvt_col_idx=-1, pvt_rw_idx=-1
 
         modified_tableau.append(modified_row)
 
-    modified_tableau_representation = tabulate(modified_tableau, headers=header,
-                                               tablefmt="pretty"
-                                               )
+    modified_tableau_representation = tabulate(
+        modified_tableau, headers=header,
+        tablefmt="pretty"
+    )
     print(modified_tableau_representation)
 
 
@@ -155,11 +160,13 @@ def calculate_optimal_solution(tableau_simplex, number_of_decision_variables):
     tableau_number = 2
 
     while is_optimal_solution(tableau_simplex[-1]):
-        pivot_column_index, pivot_column = find_pivot_column(tableau_simplex
-                                                             )  # Input variable
-        pivot_row_index, pivot_row = find_pivot_row(tableau_simplex,
-                                                    pivot_column
-                                                    )  # Output variable
+        pivot_column_index, pivot_column = find_pivot_column(
+            tableau_simplex
+        )  # Input variable
+        pivot_row_index, pivot_row = find_pivot_row(
+            tableau_simplex,
+            pivot_column
+        )  # Output variable
         pivot_element = tableau_simplex[pivot_row_index][pivot_column_index]
 
         new_tableau_simplex = []
@@ -188,9 +195,10 @@ def calculate_optimal_solution(tableau_simplex, number_of_decision_variables):
         tableau_simplex = new_tableau_simplex
 
         print(f"\nTableau Simplex #{tableau_number}")
-        show_tableau_simplex(tableau_simplex, number_of_decision_variables,
-                             pivot_column_index, pivot_row_index
-                             )
+        show_tableau_simplex(
+            tableau_simplex, number_of_decision_variables,
+            pivot_column_index, pivot_row_index
+        )
 
         tableau_number += 1
 
